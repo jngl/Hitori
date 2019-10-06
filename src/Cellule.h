@@ -30,7 +30,7 @@ class Cellule {
 public:
     Cellule();
     
-    unsigned int getNumber();
+    unsigned int getNumber() const;
     void setNumber(unsigned int n);
 
     void setFont(sf::Font& font);
@@ -46,11 +46,11 @@ public:
     
     void setPosition(unsigned int x, unsigned int y);
     
-    CelluleColor getColor();
+    CelluleColor getColor() const;
     
     void scale(float s);
     
-    void draw(sf::RenderWindow& win);
+    void draw(sf::RenderWindow& win) const;
     
 private:
     unsigned int number;

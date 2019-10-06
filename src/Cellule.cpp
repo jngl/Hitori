@@ -36,7 +36,7 @@ Cellule::Cellule() {
     setColor(Gray);
     str.setFillColor(sf::Color(125,125,125));
 }
-unsigned int Cellule::getNumber()
+unsigned int Cellule::getNumber() const
 {
     return number;
 }
@@ -65,11 +65,11 @@ void Cellule::setColor(CelluleColor c)
             break;
     }
 }
-Cellule::CelluleColor Cellule::getColor()
+Cellule::CelluleColor Cellule::getColor() const
 {
     return color;
 }
-void Cellule::draw(sf::RenderWindow& win)
+void Cellule::draw(sf::RenderWindow& win) const
 {
     win.draw(sprite);
     

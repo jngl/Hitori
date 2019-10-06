@@ -31,6 +31,8 @@
 #include  "Cellule.h"
 #include "define.h"
 
+#include <core/Vector2D.hpp>
+
 using namespace std;
 
 class Hitori {
@@ -42,7 +44,6 @@ public:
     
 protected:    
     Hitori();
-    ~Hitori();
     
     void generateBase(unsigned s);
     
@@ -65,7 +66,9 @@ private:
 
     sf::Font font;
     
-    Cellule** array;
+    core::Vector2D<Cellule> m_cells;
+    //Cellule** array;
+    
     unsigned int size;
 
     std::default_random_engine rng;

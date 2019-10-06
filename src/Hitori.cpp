@@ -96,11 +96,11 @@ scene::Scene Hitori::facile(sf::RenderWindow& App, unsigned int n)
     Hitori mHitori;
     mHitori.generateBase(n);
     
-    for(unsigned int i=0;i<mHitori.size;i++)
+    for(unsigned int y=0;y<mHitori.size;y++)
     {
-        for(unsigned int j=0;j<mHitori.size;j++)
+        for(unsigned int x=0;x<mHitori.size;x++)
         {
-            mHitori.array[i][j].setColor(Cellule::White);
+            mHitori.m_cells.at(x, y).setColor(Cellule::White);
         }
     }
     
@@ -111,13 +111,19 @@ scene::Scene Hitori::facile(sf::RenderWindow& App, unsigned int n)
         sf::Vector2i pos;
         pos.x=distribution(mHitori.rng);
         pos.y=distribution(mHitori.rng);
-        mHitori.array[pos.x][pos.y].setColor(Cellule::Black);
-        unsigned int n=mHitori.array[pos.x][pos.y].getNumber();
-        mHitori.array[pos.x][pos.y].setNumber(distribution(mHitori.rng));
+        
+        Cellule& cell = mHitori.m_cells.at(pos.x, pos.y);
+        
+        cell.setColor(Cellule::Black);
+        
+        unsigned int oldNumber=cell.getNumber();
+        
+        cell.setNumber(distribution(mHitori.rng));
+        
         if(!mHitori.check())
         {
-            mHitori.array[pos.x][pos.y].setColor(Cellule::White);
-            mHitori.array[pos.x][pos.y].setNumber(n);
+            cell.setColor(Cellule::White);
+            cell.setNumber(oldNumber);
         }
     }
     
@@ -125,7 +131,7 @@ scene::Scene Hitori::facile(sf::RenderWindow& App, unsigned int n)
     {
         for(unsigned int j=0;j<mHitori.size;j++)
         {
-            mHitori.array[i][j].setColor(Cellule::Gray);
+            mHitori.m_cells.at(i, j).setColor(Cellule::Gray);
         }
     }
     
@@ -209,20 +215,20 @@ scene::Scene Hitori::gameRun(sf::RenderWindow& App)
                 {
                     if(Event.mouseButton.button==sf::Mouse::Left)
                     {
-                        setCelluleColor(Event.mouseButton.y/celluleSize,
-                                Event.mouseButton.x/celluleSize,
+                        setCelluleColor(Event.mouseButton.x/celluleSize,
+                                Event.mouseButton.y/celluleSize,
                                 Cellule::Black);
                     }
                     else if(Event.mouseButton.button==sf::Mouse::Right)
                     {
-                        setCelluleColor(Event.mouseButton.y/celluleSize,
-                                Event.mouseButton.x/celluleSize,
+                        setCelluleColor(Event.mouseButton.x/celluleSize,
+                                Event.mouseButton.y/celluleSize,
                                 Cellule::White);
                     }
                     else
                     {
-                        setCelluleColor(Event.mouseButton.y/celluleSize,
-                                Event.mouseButton.x/celluleSize,
+                        setCelluleColor(Event.mouseButton.x/celluleSize,
+                                Event.mouseButton.y/celluleSize,
                                 Cellule::Gray);
                     }
                 }
@@ -308,15 +314,15 @@ void Hitori::generateBase(unsigned s)
     }
     delete[] a;
     
-    array=new Cellule*[size];
-    for(unsigned int i=0;i<size;i++)
+    m_cells.reset(size, size, Cellule());
+    
+    for(core::Size y=0;y<m_cells.height();y++)
     {
-        array[i]=new Cellule[size];
-        for(unsigned int j=0;j<size;j++)
+        for(core::Size x=0;x<m_cells.height();x++)
         {
-            array[i][j].setNumber(t1[i][j]);
-            array[i][j].setPosition(j,i);
-            array[i][j].setFont(font);
+            m_cells.at(x,y).setNumber(t1[y][x]);
+            m_cells.at(x,y).setPosition(x, y);
+            m_cells.at(x,y).setFont(font);
         }
     }
     
@@ -328,39 +334,29 @@ Hitori::Hitori()
     rng.seed(seedGenerator());
 
     font.loadFromFile("data/Vera.ttf");
+}
 
-    array=nullptr;
-}
-Hitori::~Hitori()
-{
-    if(array!=nullptr)
-    {
-        for(unsigned int i=0;i<size;i++)
-        {
-            delete[] array[i];
-        }
-        
-        delete[] array;
-    }
-}
 unsigned int Hitori::getSize()
 {
     return size;
 }
+
 void Hitori::draw(sf::RenderWindow& win)
 {
-    for(unsigned int i=0;i<size;i++)
-    {        
-        for(unsigned int j=0;j<size;j++)
+    for(core::Size y=0;y<m_cells.height();y++)
+    {
+        for(core::Size x=0;x<m_cells.height();x++)
         {
-            array[i][j].draw(win);
+            m_cells.at(x,y).draw(win);
         }
     }
 }
+
 void Hitori::setCelluleColor(unsigned int x, unsigned int y, Cellule::CelluleColor c)
 {
-    array[x][y].setColor(c);
+    m_cells.at(x,y).setColor(c);
 }
+
 bool Hitori::check()
 {    
     for(unsigned int i=0;i<size;i++)//pour chaque ligne
@@ -380,7 +376,7 @@ bool Hitori::check()
         c.array[y]=new bool[size];
         for(unsigned int x=0;x<size;x++)
         {
-            if(array[y][x].getColor()==Cellule::Black)
+            if(m_cells.at(x, y).getColor()==Cellule::Black)
             {
                 c.array[y][x]=true;
             }
@@ -395,14 +391,14 @@ bool Hitori::check()
 }
 bool Hitori::checkCellule(unsigned int x, unsigned int y)
 {
-    Cellule c=array[y][x];
+    const Cellule& cell = m_cells.at(x, y);
     
-    if(c.getColor()==Cellule::Black)
+    if(cell.getColor()==Cellule::Black)
     {
         //il ne faut pas que le cellule de gauche soit noir
         if(x<size-1)
         {
-            if(array[y][x+1].getColor()==Cellule::Black)
+            if(m_cells.at(x+1, y).getColor()==Cellule::Black)
             {
                 return false;
             }
@@ -411,25 +407,25 @@ bool Hitori::checkCellule(unsigned int x, unsigned int y)
         //cellule du bas pas noir
         if(y<size-1)
         {
-            if(array[y+1][x].getColor()==Cellule::Black)
+            if(m_cells.at(x, y+1).getColor()==Cellule::Black)
             {
                 return false;
             }
         }
         
     }
-    else if(c.getColor()==Cellule::White)
+    else if(cell.getColor()==Cellule::White)
     {
-        unsigned int tmp=c.getNumber();
+        unsigned int tmp=cell.getNumber();
         
         //une seul fois par ligne
         for(unsigned int k=0;k<size;k++)//le numero et t'il uplusieur fois
         {
             if(k!=x)//si c'est une autre
             {
-                if(array[y][k].getColor()==Cellule::White)//s'il elle est blanche
+                if(m_cells.at(k, y).getColor()==Cellule::White)//s'il elle est blanche
                 {
-                    if(tmp==array[y][k].getNumber())
+                    if(tmp==m_cells.at(k, y).getNumber())
                     {
                         return false;
                     }
@@ -442,9 +438,9 @@ bool Hitori::checkCellule(unsigned int x, unsigned int y)
         {
             if(k!=y)//si c'est une autre
             {
-                if(array[k][x].getColor()==Cellule::White)//s'il elle est blanche
+                if(m_cells.at(x, k).getColor()==Cellule::White)//s'il elle est blanche
                 {
-                    if(tmp==array[k][x].getNumber())
+                    if(tmp==m_cells.at(x, k).getNumber())
                     {
                         return false;
                     }
@@ -460,26 +456,28 @@ bool Hitori::checkCellule(unsigned int x, unsigned int y)
     return true;
 }
 void Hitori::print()
-{    
-    for(unsigned int i=0;i<size;i++)
+{
+    for(core::Size y=0;y<m_cells.height();y++)
     {
-        for(unsigned int j=0;j<size;j++)
+        for(core::Size x=0;x<m_cells.height();x++)
         {
-            cout<<array[i][j].getNumber();
+            cout<<m_cells.at(x, y).getNumber();
         }
         cout<<endl;
     }
 }
+
 void Hitori::scale(float s)
 {
-    for(unsigned int i=0;i<size;i++)
+    for(core::Size y=0;y<m_cells.height();y++)
     {
-        for(unsigned int j=0;j<size;j++)
+        for(core::Size x=0;x<m_cells.height();x++)
         {
-            array[i][j].scale(s);
+            m_cells.at(x,y).scale(s);
         }
     }
 }
+
 unsigned int* Hitori::randArray(unsigned int s)
 {
     vector<unsigned int> a1;

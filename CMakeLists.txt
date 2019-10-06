@@ -25,9 +25,12 @@ gtest_discover_tests(HitoriTest)
 file(GLOB_RECURSE Hitori_source_files src/*)
 add_executable(Hitori ${Hitori_source_files})
 
-#Hitori
 target_include_directories(Hitori PUBLIC src)
 
-#SFML
-target_link_libraries(Hitori PRIVATE sfml-graphics sfml-window sfml-system)
+target_link_libraries(Hitori 
+    libHitori
+    sfml-graphics 
+    sfml-window 
+    sfml-system
+)
 
