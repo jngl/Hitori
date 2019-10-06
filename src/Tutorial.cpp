@@ -48,7 +48,8 @@ scene::Scene Tutorial::run(sf::RenderWindow& App)
             {
                 return scene::Close;
             }
-            else if(Event.type == sf::Event::MouseButtonReleased)
+
+            if(Event.type == sf::Event::MouseButtonReleased)
             {
                 switch(n)
                 {

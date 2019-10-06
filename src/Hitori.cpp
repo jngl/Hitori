@@ -38,7 +38,7 @@ class WhiteCheck
 {
 public:
     bool** array;
-    unsigned int size;
+    size_t size;
     
     bool check()
     {
@@ -51,9 +51,9 @@ public:
             checkpart1(0,1);
         }
         
-        for(unsigned int y=0;y<size;y++)
+        for(size_t y=0;y<size;y++)
         {
-            for(unsigned int x=0;x<size;x++)
+            for(size_t x=0;x<size;x++)
             {
                 if(!array[y][x])
                     return false;       
@@ -134,7 +134,7 @@ scene::Scene Hitori::facile(sf::RenderWindow& App, unsigned int n)
 scene::Scene Hitori::gameRun(sf::RenderWindow& App)
 {
     //taille d'une cellule
-    float celluleSize=600.f/(float)size;
+    float celluleSize=600.f/static_cast<float>(size);
     scale(celluleSize/56.f);
     
     //cotee
@@ -202,7 +202,8 @@ scene::Scene Hitori::gameRun(sf::RenderWindow& App)
             {
                 return scene::Close;
             }
-            else if(Event.type == sf::Event::MouseButtonPressed)
+
+            if(Event.type == sf::Event::MouseButtonPressed)
             {
                 if(Event.mouseButton.x<600)
                 {
@@ -328,11 +329,11 @@ Hitori::Hitori()
 
     font.loadFromFile("data/Vera.ttf");
 
-    array=NULL;
+    array=nullptr;
 }
 Hitori::~Hitori()
 {
-    if(array!=NULL)
+    if(array!=nullptr)
     {
         for(unsigned int i=0;i<size;i++)
         {

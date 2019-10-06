@@ -24,6 +24,20 @@
 #ifndef BUTTON_H
 #define	BUTTON_H
 
+#include "data.h"
+
+namespace button {
+    enum class State{
+        NORMAL,
+        OVER,
+        CLICKED
+    };
+
+    State StateUpdate(const Point2f& button_position, const Vector2f& button_size, const Point2f& mouse_position, bool mouse_pressed);
+
+    ColorRGBA stateToColor(State state);
+}
+
 #include <SFML/Graphics.hpp>
 
 class Button {

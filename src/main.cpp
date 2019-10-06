@@ -28,13 +28,6 @@
 #include "Tutorial.h"
 #include "Menu.h"
 
-using namespace std;
-
-
-/*
- * 
- */
-
 int main()
 {
     scene::Scene s=scene::Menu;
@@ -50,7 +43,6 @@ int main()
                 break;
             case scene::Close:
                 return 0;
-                break;
             case scene::Tutorial:
                 s=Tutorial::run(window);
                 break;
@@ -63,11 +55,6 @@ int main()
             case scene::GameDifficile :
                 s=Hitori::facile(window,12);
                 break;
-            default:
-                cout<<"scene inconnue"<<endl;
-                return 1;
         }
     }
-    
-    return 0;
 }

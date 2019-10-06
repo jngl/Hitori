@@ -26,8 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 void Button::draw(sf::RenderWindow& window)
 {
     sf::Vector2i tmp = sf::Mouse::getPosition(window);
-   /* tmp.x -= sprite.getPosition().x;
-    tmp.y -= sprite.getPosition().y;*/
 
     if(sprite.getGlobalBounds().contains(tmp.x,tmp.y))
     {

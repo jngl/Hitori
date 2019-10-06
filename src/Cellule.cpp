@@ -130,7 +130,7 @@ void Cellule::scale(float s)
     sprite.setPosition(sprite.getPosition()*s);
     
     sf::Vector2f pos;
-    float ts=(float)Hitori::TileSize*s;
+    float ts=static_cast<float>(Hitori::TileSize*s);
     pos.x=sprite.getPosition().x+ts/3;
     pos.y=sprite.getPosition().y+ts/6;
     str.setPosition(pos);
